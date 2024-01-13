@@ -1,8 +1,13 @@
+import Image from 'next/image'
 import React from 'react'
 
 const Banner = () => {
   return (
-    <div>Banner</div>
+    <div className="h-[237px] bg-black flex items-center justify-center">
+      <div className="h-[237px] relative w-full">
+          <Image src={"/banner.jpg"} fill alt="" className="object-cover"/>
+      </div>
+    </div>
   )
 }
 
