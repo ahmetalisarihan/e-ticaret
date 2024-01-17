@@ -1,6 +1,6 @@
 "use client";
 import { CardProductProps } from "@/app/components/detail/DetailClient";
-import { createContext, use, useCallback, useContext, useState } from "react";
+import { createContext, use, useCallback, useContext, useEffect, useState } from "react";
 
 interface CardContextProps {
   productCartQty: number;
@@ -17,6 +17,12 @@ export const CardContextProvider = (props: Props) => {
   const [productCartQty, setProductCartQty] = useState(0);
   const [cartPrdcts, setCartPrdcts] = useState<CardProductProps[] | null>(null);
 
+  useEffect(() => {
+    let getItem = localStorage.getItem("cart");
+    let getItemParse: CardProductProps[] | null = JSON.parse(getItem!);
+    setCartPrdcts(getItemParse);
+  }, []);
+
   const addToBasket = useCallback(
     (product: CardProductProps) => {
       setCartPrdcts((prev) => {
@@ -27,6 +33,7 @@ export const CardContextProvider = (props: Props) => {
         } else {
           updatedCart = [product];
         }
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
         return updatedCart;
       });
     },

@@ -35,8 +35,8 @@ const DetailClient = ({ product }: { product: any }) => {
 
   useEffect(() => {
     setDisplayButton(false);
-    let controlDisplay: any = cartPrdcts?.find((cart) => cart.id == product.id);
-    if (controlDisplay > -1) {
+    let controlDisplay: any = cartPrdcts?.findIndex(cart => cart.id == product.id);
+    if(controlDisplay > -1) {
       setDisplayButton(true);
     }
   }, [cartPrdcts]);
@@ -65,21 +65,20 @@ const DetailClient = ({ product }: { product: any }) => {
             <div className="text-slate-500">{product?.description}</div>
             <div className="flex items-center gap-2">
               <div>STOK DURUMU:</div>
-              {product.inStock ? (
+              {product.inStock ? 
                 <div className="text-green-500">Stokta var</div>
-              ) : (
+               : 
                 <div className="text-red-500">Stokta yok</div>
-              )}
+              }
             </div>
             <div className="text-lg md:text-2xl text-orange-600 font-bold">
               {product.price} ₺
             </div>
-            {displayButton ? (
-              <>
-                {" "}
+            {
+            displayButton ?  <>
                 <Button text="Ürün Sepette" small outline onClick={() => {}} />
               </>
-            ) : (
+             : 
               <>
                 <Counter
                   increaseFunc={increaseFunc}
@@ -92,7 +91,7 @@ const DetailClient = ({ product }: { product: any }) => {
                   onClick={() => addToBasket(cardProduct)}
                 />
               </>
-            )}
+            }
           </div>
         </div>
         <Heading text="Yorumlar" />
