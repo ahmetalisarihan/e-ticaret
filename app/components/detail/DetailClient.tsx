@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageContainer from "../containers/PageContainer";
 import Image from "next/image";
 import Counter from "../general/Counter";
@@ -7,41 +7,51 @@ import { Rating } from "@mui/material";
 import Button from "../general/Button";
 import Comment from "./Comment";
 import Heading from "../general/Heading";
-
+import useCart from "@/hooks/useCart";
 
 export type CardProductProps = {
-    id: string
-    name: string
-    description: string
-    price: number
-    quantity: number
-    image: string
-    inStock: boolean
-}
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  image: string;
+  inStock: boolean;
+};
 
 const DetailClient = ({ product }: { product: any }) => {
+  const { productCartQty, addToBasket, cartPrdcts } = useCart();
+  const [displayButton, setDisplayButton] = useState(false);
 
-    const [cardProduct, setCardProduct] = useState<CardProductProps>(
-        {
-            id: product.id,
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            quantity: 1,
-            image: product.image,
-            inStock: product.inStock
-        }
-    );
+  const [cardProduct, setCardProduct] = useState<CardProductProps>({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    quantity: 1,
+    image: product.image,
+    inStock: product.inStock,
+  });
 
-    const increaseFunc = () => {
-        if(cardProduct.quantity == 10) return
-        setCardProduct(prev => ({...prev, quantity: prev.quantity + 1 }))
-     }
-     const decreaseFunc = () => {
-         if(cardProduct.quantity == 1) return
-         setCardProduct(prev => ({...prev, quantity: prev.quantity - 1 }))
-     }
-     let productRating = product?.reviews?.reduce((acc: number, item: any) => acc + item.rating, 0) / product?.reviews?.length
+  useEffect(() => {
+    setDisplayButton(false);
+    let controlDisplay: any = cartPrdcts?.find((cart) => cart.id == product.id);
+    if (controlDisplay > -1) {
+      setDisplayButton(true);
+    }
+  }, [cartPrdcts]);
+
+  const increaseFunc = () => {
+    if (cardProduct.quantity == 10) return;
+    setCardProduct((prev) => ({ ...prev, quantity: prev.quantity + 1 }));
+  };
+  const decreaseFunc = () => {
+    if (cardProduct.quantity == 1) return;
+    setCardProduct((prev) => ({ ...prev, quantity: prev.quantity - 1 }));
+  };
+  let productRating =
+    product?.reviews?.reduce((acc: number, item: any) => acc + item.rating, 0) /
+    product?.reviews?.length;
   return (
     <div className="my-10">
       <PageContainer>
@@ -54,22 +64,42 @@ const DetailClient = ({ product }: { product: any }) => {
             <Rating name="read-only" value={productRating} readOnly />
             <div className="text-slate-500">{product?.description}</div>
             <div className="flex items-center gap-2">
-            <div>STOK DURUMU:</div>
-            {product.inStock ? <div className="text-green-500">Stokta var</div> : <div className="text-red-500">Stokta yok</div>}
+              <div>STOK DURUMU:</div>
+              {product.inStock ? (
+                <div className="text-green-500">Stokta var</div>
+              ) : (
+                <div className="text-red-500">Stokta yok</div>
+              )}
+            </div>
+            <div className="text-lg md:text-2xl text-orange-600 font-bold">
+              {product.price} ₺
+            </div>
+            {displayButton ? (
+              <>
+                {" "}
+                <Button text="Ürün Sepette" small outline onClick={() => {}} />
+              </>
+            ) : (
+              <>
+                <Counter
+                  increaseFunc={increaseFunc}
+                  decreaseFunc={decreaseFunc}
+                  cardProduct={cardProduct}
+                />
+                <Button
+                  text="Sepete Ekle"
+                  small
+                  onClick={() => addToBasket(cardProduct)}
+                />
+              </>
+            )}
           </div>
-          <Counter increaseFunc={increaseFunc} decreaseFunc={decreaseFunc} cardProduct={cardProduct} />
-          <div className="text-lg md:text-2xl text-orange-600 font-bold">{product.price} ₺</div>
-          <Button text="Sepete Ekle" small onClick={() => console.log(cardProduct)} />
-          </div>
-          
         </div>
-        <Heading  text="Yorumlar" />
+        <Heading text="Yorumlar" />
         <div>
-        {
-                    product?.reviews?.map((prd: any) => (
-                        <Comment key={prd.id} prd={prd}/>
-                    ))
-                }
+          {product?.reviews?.map((prd: any) => (
+            <Comment key={prd.id} prd={prd} />
+          ))}
         </div>
       </PageContainer>
     </div>
