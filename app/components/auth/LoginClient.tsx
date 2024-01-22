@@ -8,13 +8,28 @@ import { useRouter } from 'next/navigation'
 import Button from '../general/Button'
 import { FaGoogle } from 'react-icons/fa'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
+import toast from 'react-hot-toast'
 
 const LoginClient = () => {
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
-        console.log(data);
+        signIn('credentials', {
+            ...data,
+            redirect: false
+        }).then((callback) => {
+            if(callback?.ok){
+                router.push('/cart')
+                router.refresh();
+                toast.success('Login İşlemi Basarılı...')
+            }
+
+            if(callback?.error){
+                toast.error(callback.error)
+            }
+        })
     }
   return (
     <AuthContainer>
