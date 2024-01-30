@@ -1,7 +1,6 @@
 import React from 'react'
 import { IconType } from 'react-icons'
 
-
 interface ChoiceInputProps {
     text: string;
     icon: IconType;
