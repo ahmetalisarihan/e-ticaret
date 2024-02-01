@@ -1,4 +1,4 @@
-import prisma from "@libs/prismadb";
+import prisma from "@/libs/prismadb";
 
 export interface IProductParams{
     category?: string | null
